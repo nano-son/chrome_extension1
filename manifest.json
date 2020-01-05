@@ -2,5 +2,19 @@
     "name": "srt chrome extension",
     "version": "0.1",
     "description": "nano",
+    "permissions": ["storage"],
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": false
+    },
+    "content_scripts": [
+        {
+          "matches": ["http://etk.srail.co.kr/*", "https://etk.srail.co.kr/*"],
+          "css": ["srtCss.css"],
+          "js": ["srtScript.js"],
+          "run_at": "document_idle",
+          "all_frames": false
+        }
+    ],
     "manifest_version": 2
 }
