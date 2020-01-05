@@ -2,7 +2,7 @@
     "name": "srt chrome extension",
     "version": "0.1",
     "description": "nano",
-    "permissions": ["storage"],
+    "permissions": ["tabs", "storage"],
     "background": {
         "scripts": ["background.js"],
         "persistent": false
