@@ -1,20 +1,27 @@
-function makeStartButton() {
+function makeStartButton(flag) {
     var startButton = document.createElement("button");    
     startButton.setAttribute("class", "btn_large wx200 btn_burgundy_dark2 val_m corner");
     startButton.setAttribute("type", "button");
     startButton.setAttribute("id", "mStartButton");
-    startButton.innerText = "시작";
+    
+    if(flag) {
+        startButton.innerText = "중지";
+        window.onload = timedRefresh(5000);
+    } else {
+        startButton.innerText = "시작";
+    }
 
-    startButton.addEventListener("click", startButtonOnClick)
-
+    startButton.addEventListener("click", function(event) {
+        if(flag) {
+            startButton.innerText = "시작";
+            updateStatus(false)
+        } else {
+            startButton.innerText = "중지";
+            window.onload = timedRefresh(100);
+            updateStatus(true)
+        }
+    });
     return startButton;
-}
-
-function startButtonOnClick(event) {
-    alert("hello extension!");
-    window.onload = timedRefresh(5000);
-    startButton.innerText = "클릭됨"
-    updateStatus(true)
 }
 
 function timedRefresh(timeoutPeriod) {
@@ -28,17 +35,22 @@ function updateStatus(status) {
 }
 
 function getStatus() {
-    chrome.storage.sync.get(['flag'], function() {
-        console.log('Value currently is ' + result.key);
-    })
+    chrome.storage.sync.get('flag', function(result) {
+        console.log('Value currently is ' + result.flag);
+    });
 }
-getStatus()
-// window.onload = timedRefresh(5000);
 
-var parentForAddingStartButton = document.getElementsByClassName("sub_con_area")[0];
-var startButton = makeStartButton();
-var text = document.createTextNode("nano test");
+//매크로 대상들도 필요할 듯
+function doJob(flag) {
+    var parentForAddingStartButton = document.getElementsByClassName("sub_con_area")[0];
+    var startButton = makeStartButton(flag);
 
-parentForAddingStartButton.appendChild(startButton);
-parentForAddingStartButton.appendChild(text);
+    parentForAddingStartButton.appendChild(startButton);
+}
 
+chrome.storage.sync.get('flag', function(result) {
+    var flag = result.flag;
+    console.log('Value currently is ' + result.flag);
+
+    doJob(flag);
+});
