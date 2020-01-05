@@ -1,3 +1,4 @@
+var idOfTimeOut;
 function makeStartButton(flag) {
     var startButton = document.createElement("button");    
     startButton.setAttribute("class", "btn_large wx200 btn_burgundy_dark2 val_m corner");
@@ -6,7 +7,7 @@ function makeStartButton(flag) {
     
     if(flag) {
         startButton.innerText = "중지";
-        window.onload = timedRefresh(5000);
+        window.onload = refreshPageAfter(5000);
     } else {
         startButton.innerText = "시작";
     }
@@ -14,18 +15,19 @@ function makeStartButton(flag) {
     startButton.addEventListener("click", function(event) {
         if(flag) {
             startButton.innerText = "시작";
-            updateStatus(false)
+            clearTimeout(idOfTimeOut);
+            updateStatus(false);
         } else {
             startButton.innerText = "중지";
-            window.onload = timedRefresh(100);
-            updateStatus(true)
+            window.onload = refreshPageAfter(10);
+            updateStatus(true);
         }
     });
     return startButton;
 }
 
-function timedRefresh(timeoutPeriod) {
-	setTimeout("location.reload(true);",timeoutPeriod);
+function refreshPageAfter(timeoutPeriod) {
+	idOfTimeOut = setTimeout("location.reload(true);",timeoutPeriod);
 }
 
 function updateStatus(status) {
@@ -50,7 +52,5 @@ function doJob(flag) {
 
 chrome.storage.sync.get('flag', function(result) {
     var flag = result.flag;
-    console.log('Value currently is ' + result.flag);
-
     doJob(flag);
 });
