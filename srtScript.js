@@ -86,27 +86,47 @@ function doJob(flag, firstClassList, economyClassList) {
     parentForAddingStartButton.appendChild(startButton);
 
     var searchedRows = document.getElementsByTagName("tbody")[0].children;
+    var targetButtons = []
     // var searchedRows = $('#result-form fieldset div.tbl_wrap table tbody tr');
     // var tdForFirstClass = $('#result-form fieldset div.tbl_wrap table tbody tr td:nth-child(6)');
     // var tdForEconomyClass = $('#result-form fieldset div.tbl_wrap table tbody tr td:nth-child(7)');
 
     for(var i=0; i<searchedRows.length; ++i) {
         var row = searchedRows[i];
-        var trainNumber = searchedRows[i].children[2].innerText;
-        var tdForFirstClass = searchedRows[i].children[5];
-        var tdForEconomyClass = searchedRows[i].children[6];
+        var trainNumber = row.children[2].innerText;
+        var tdForFirstClass = row.children[5];
+        var tdForEconomyClass = row.children[6];
 
         checkBtn = document.createElement("input");
         checkBtn.setAttribute("type", "checkbox");
         checkBtn.setAttribute("class", "mCheckboxForFirstClass");
-        checkBtn.checked = firstClassList.includes(trainNumber);
+    
+        if(firstClassList.includes(trainNumber)) {
+            checkBtn.checked = true;
+            targetButtons.push(Array.from(tdForFirstClass.getElementsByTagName("a")));
+        }
         tdForFirstClass.insertBefore(checkBtn, tdForFirstClass.firstChild);
 
         checkBtn2 = document.createElement("input");
         checkBtn2.setAttribute("type", "checkbox");
         checkBtn2.setAttribute("class", "mCheckboxForEconomyClass");
         checkBtn2.checked = economyClassList.includes(trainNumber);
+        if(economyClassList.includes(trainNumber)) {
+            checkBtn2.checked = true;
+            targetButtons.push(Array.from(tdForEconomyClass.getElementsByTagName("a")));
+        }
         tdForEconomyClass.insertBefore(checkBtn2, tdForEconomyClass.firstChild);
+    }
+
+    targetButtons = targetButtons.flat(); //평탄화
+    console.log("***********");
+    console.log(targetButtons);
+    for(var i=0; i<targetButtons.length; ++i) {
+        console.log(targetButtons[i])
+        console.log(targetButtons[i].tagName);
+        if(targetButtons[i].getAttribute('onclick').startsWith("requestReservationInfo(")) { //TODO: how about regexp?
+            targetButtons[i].click();
+        }
     }
 }
 
