@@ -2,16 +2,16 @@
     "name": "srt chrome extension",
     "version": "0.1",
     "description": "nano",
-    "permissions": ["tabs", "storage"],
+    "permissions": ["storage"],
     "background": {
         "scripts": ["background.js"],
         "persistent": false
     },
     "content_scripts": [
         {
-          "matches": ["http://etk.srail.co.kr/*", "https://etk.srail.co.kr/*"],
+          "matches": ["https://etk.srail.co.kr/hpg/hra/01/selectScheduleList.do*", "http://etk.srail.co.kr/hpg/hra/01/selectScheduleList.do*"],
           "css": ["srtCss.css"],
-          "js": ["srtScript.js"],
+          "js": ["jquery-3.3.1.min.js", "srtScript.js"],
           "run_at": "document_idle",
           "all_frames": false
         }
