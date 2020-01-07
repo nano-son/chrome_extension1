@@ -1,11 +1,13 @@
 var idOfTimeOut;
-function makeStartButton(flag) {
+var globalFlag = false;
+
+function makeStartButton() {
     var startButton = document.createElement("button");    
     startButton.setAttribute("class", "btn_large wx200 btn_burgundy_dark2 val_m corner");
     startButton.setAttribute("type", "button");
     startButton.setAttribute("id", "mStartButton");
     
-    if(flag) {
+    if(globalFlag) {
         startButton.innerText = "중지";
         window.onload = refreshPageAfter(2200);
     } else {
@@ -13,7 +15,7 @@ function makeStartButton(flag) {
     }
 
     startButton.addEventListener("click", function(event) {
-        if(flag) {
+        if(globalFlag) {
             startButton.innerText = "시작";
             updateStatus(false);
             clearTimeout(idOfTimeOut);
@@ -22,6 +24,7 @@ function makeStartButton(flag) {
             updateStatus(true);
             location.reload(true);
         }
+        globalFlag = !globalFlag;
     });
     return startButton;
 }
@@ -79,9 +82,9 @@ function initJquery() {
 }
 
 //매크로 대상들도 필요할 듯
-function doJob(flag, firstClassList, economyClassList) {
+function doJob(firstClassList, economyClassList) {
     var parentForAddingStartButton = document.getElementsByClassName("sub_con_area")[0];
-    var startButton = makeStartButton(flag);
+    var startButton = makeStartButton();
 
     parentForAddingStartButton.appendChild(startButton);
 
@@ -123,7 +126,6 @@ function doJob(flag, firstClassList, economyClassList) {
     console.log(targetButtons);
     for(var i=0; i<targetButtons.length; ++i) {
         console.log(targetButtons[i])
-        console.log(targetButtons[i].tagName);
         var onClickAttr = targetButtons[i].getAttribute('onclick')
         if(onClickAttr && onClickAttr.startsWith("requestReservationInfo")) { //requestReservationInfo method: 예매하기, requestReservationInfoAnn method: 입석+좌석
             targetButtons[i].click();
@@ -133,7 +135,7 @@ function doJob(flag, firstClassList, economyClassList) {
 
 // initJquery();
 chrome.storage.sync.get('mData', function(result) {
-    var flag = result.mData.flag;
+    globalFlag = result.mData.flag;
     var firstClassList = [];
     if(Array.isArray(result.mData.firstClassList)) {
         firstClassList = result.mData.firstClassList;
@@ -143,8 +145,8 @@ chrome.storage.sync.get('mData', function(result) {
         economyClassList = result.mData.economyClassList;
     }
 
-    console.log("flag:"+flag+", fList:"+firstClassList+", eList:"+economyClassList);
-    doJob(flag, firstClassList, economyClassList);
+    console.log("flag:"+globalFlag+", fList:"+firstClassList+", eList:"+economyClassList);
+    doJob(firstClassList, economyClassList);
 });
 
 //.tbl_wrap th_thead > td > a
