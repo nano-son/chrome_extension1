@@ -124,7 +124,8 @@ function doJob(flag, firstClassList, economyClassList) {
     for(var i=0; i<targetButtons.length; ++i) {
         console.log(targetButtons[i])
         console.log(targetButtons[i].tagName);
-        if(targetButtons[i].getAttribute('onclick').startsWith("requestReservationInfo(")) { //TODO: how about regexp?
+        var onClickAttr = targetButtons[i].getAttribute('onclick')
+        if(onClickAttr && onClickAttr.startsWith("requestReservationInfo")) { //requestReservationInfo method: 예매하기, requestReservationInfoAnn method: 입석+좌석
             targetButtons[i].click();
         }
     }
