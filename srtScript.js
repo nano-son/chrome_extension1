@@ -20,11 +20,14 @@ function makeStartButton() {
             updateStatus(false);
             clearTimeout(idOfTimeOut);
         } else {
-            startButton.innerText = "중지";
-            updateStatus(true);
-            location.reload(true);
+            if(atLeastOneCheck()) {
+                startButton.innerText = "중지";
+                updateStatus(true);
+                location.reload(true);
+            } else {
+                alert("체크된 항목이 없습니다.");        
+            }
         }
-        globalFlag = !globalFlag;
     });
     return startButton;
 }
@@ -58,27 +61,9 @@ function updateStatus(status) {
     }
 
     chrome.storage.sync.set({mData: {flag: status, firstClassList: firstClassList, economyClassList: economyClassList}}, function() {
+        globalFlag = status;
         console.log("status setting completed: "+status+", firstClassList:"+firstClassList+", economyClassList:"+economyClassList);
     });
-}
-
-function getStatus() {
-    chrome.storage.sync.get('mData', function(result) {
-        console.log('Value currently is ' + result.flag);
-        console.log('Value currently is ' + result.firstClassList);
-        console.log('Value currently is ' + result.economyClassList);
-    });
-}
-
-function initJquery() {
-    // var jqry = document.createElement('script');
-    // jqry.src = "https://code.jquery.com/jquery-3.3.1.min.js";
-    // jqry.type = "text/script";
-    // // var jqueryNode = document.createElement("script");
-    // // jqueryNode.setAttribute("type", "text/script");
-    // // jqueryNode.setAttribute("src", "https://code.jquery.com/jquery-3.3.1.min.js");
-    // document.getElementsByTagName('head')[0].appendChild(jqry);
-    jQuery.noConflict();
 }
 
 //매크로 대상들도 필요할 듯
@@ -90,9 +75,6 @@ function doJob(firstClassList, economyClassList) {
 
     var searchedRows = document.getElementsByTagName("tbody")[0].children;
     var targetButtons = []
-    // var searchedRows = $('#result-form fieldset div.tbl_wrap table tbody tr');
-    // var tdForFirstClass = $('#result-form fieldset div.tbl_wrap table tbody tr td:nth-child(6)');
-    // var tdForEconomyClass = $('#result-form fieldset div.tbl_wrap table tbody tr td:nth-child(7)');
 
     for(var i=0; i<searchedRows.length; ++i) {
         var row = searchedRows[i];
@@ -122,8 +104,7 @@ function doJob(firstClassList, economyClassList) {
     }
 
     targetButtons = targetButtons.flat(); //평탄화
-    console.log("***********");
-    console.log(targetButtons);
+    
     for(var i=0; i<targetButtons.length; ++i) {
         console.log(targetButtons[i])
         var onClickAttr = targetButtons[i].getAttribute('onclick')
@@ -133,7 +114,25 @@ function doJob(firstClassList, economyClassList) {
     }
 }
 
-// initJquery();
+function atLeastOneCheck() {
+    const checkboxesForFirstClass = document.getElementsByClassName("mCheckboxForFirstClass");
+    const checkboxesForEconomyClass = document.getElementsByClassName("mCheckboxForEconomyClass");
+
+    for(var i =0; i<checkboxesForFirstClass.length; ++i) {
+        if(checkboxesForFirstClass[i].checked) {
+            return true;
+        }
+    }
+
+    for(var i =0; i<checkboxesForEconomyClass.length; ++i) {
+        if(checkboxesForEconomyClass[i].checked) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
 chrome.storage.sync.get('mData', function(result) {
     globalFlag = result.mData.flag;
     var firstClassList = [];
@@ -149,8 +148,6 @@ chrome.storage.sync.get('mData', function(result) {
     doJob(firstClassList, economyClassList);
 });
 
-//.tbl_wrap th_thead > td > a
-//$('#result-form fieldset div.tbl_wrap table tbody tr:nth-child(2)').length;
 // 각 줄 가져오는거: $('#result-form fieldset div.tbl_wrap table tbody tr').length;
 // $('#result-form fieldset div.tbl_wrap table tbody tr td:nth-child(6)').length;
 // $('#result-form fieldset div.tbl_wrap table tbody tr td:nth-child(7)').length;
