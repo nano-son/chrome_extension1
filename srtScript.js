@@ -7,7 +7,7 @@ function makeStartButton(flag) {
     
     if(flag) {
         startButton.innerText = "중지";
-        window.onload = refreshPageAfter(5000);
+        window.onload = refreshPageAfter(2200);
     } else {
         startButton.innerText = "시작";
     }
@@ -20,7 +20,7 @@ function makeStartButton(flag) {
         } else {
             startButton.innerText = "중지";
             updateStatus(true);
-            window.onload = refreshPageAfter(10000);
+            location.reload(true);
         }
     });
     return startButton;
