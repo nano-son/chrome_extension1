@@ -70,6 +70,12 @@ function updateStatus(status) {
     });
 }
 
+function playSuccessAudio() {
+    var audio = new Audio();
+    audio.src = chrome.runtime.getURL('success.wav');
+    audio.play();
+}
+
 //매크로 대상들도 필요할 듯
 function doJob(firstClassList, economyClassList) {
     var parentForAddingStartButton = document.getElementsByClassName("sub_con_area")[0];
@@ -77,7 +83,13 @@ function doJob(firstClassList, economyClassList) {
 
     parentForAddingStartButton.appendChild(startButton);
 
-    var searchedRows = document.getElementsByTagName("tbody")[0].children;
+    var tbody = document.getElementsByTagName("tbody")[0];
+    if(tbody.length == 0 && globalFlag) {
+        updateStatus(false);
+        return;
+    }
+
+    var searchedRows = tbody.children;
     var targetButtons = []
 
     for(var i=0; i<searchedRows.length; ++i) {
@@ -105,16 +117,35 @@ function doJob(firstClassList, economyClassList) {
             targetButtons.push(Array.from(tdForEconomyClass.getElementsByTagName("a")));
         }
         tdForEconomyClass.insertBefore(checkBtn2, tdForEconomyClass.firstChild);
+
+        if(globalFlag) {
+            console.log("ttttest");
+            checkBtn.onclick = canNotModifyCheckBox;
+            checkBtn2.onclick = canNotModifyCheckBox;
+        }
     }
 
     targetButtons = targetButtons.flat(); //평탄화
+    if(targetButtons.length <= 0) {
+        console.log("flag down")
+        updateStatus(false);
+    }
+
     
     for(var i=0; i<targetButtons.length; ++i) {
         console.log(targetButtons[i])
         var onClickAttr = targetButtons[i].getAttribute('onclick')
         if(onClickAttr && onClickAttr.startsWith("requestReservationInfo")) { //requestReservationInfo method: 예매하기, requestReservationInfoAnn method: 입석+좌석
+            playSuccessAudio();
             targetButtons[i].click();
         }
+    }
+}
+
+function canNotModifyCheckBox() {
+    if(globalFlag) {
+        alert("매크로 동작동안 체크박스를 수정할 수 없습니다.");
+        return false;
     }
 }
 
