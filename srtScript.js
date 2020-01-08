@@ -16,14 +16,10 @@ function makeStartButton() {
 
     startButton.addEventListener("click", function(event) {
         if(globalFlag) {
-            startButton.innerText = "시작";
             updateStatus(false);
-            clearTimeout(idOfTimeOut);
         } else {
             if(atLeastOneCheck()) {
-                startButton.innerText = "중지";
                 updateStatus(true);
-                location.reload(true);
             } else {
                 alert("체크된 항목이 없습니다.");        
             }
@@ -45,7 +41,7 @@ function updateStatus(status) {
     if(status) {
         for(var i=0; i<checkboxesForFirstClass.length; ++i) {
             if(checkboxesForFirstClass[i].checked) {
-                const parent = checkboxesForFirstClass[i].parentElement.parentElement;
+                const parent = checkboxesForFirstClass[i].parentElement.parentElement; //tr td input 이라서 두번 거슬러 올라감
                 const trainNumber = parent.children[2].innerText;
                 firstClassList.push(trainNumber);
             }
@@ -62,6 +58,14 @@ function updateStatus(status) {
 
     chrome.storage.sync.set({mData: {flag: status, firstClassList: firstClassList, economyClassList: economyClassList}}, function() {
         globalFlag = status;
+        startButton = document.getElementById("mStartButton");
+        if(status) {
+            startButton.innerText = "중지";
+            location.reload(true);
+        } else {
+            startButton.innerText = "시작";
+            clearTimeout(idOfTimeOut);
+        }
         console.log("status setting completed: "+status+", firstClassList:"+firstClassList+", economyClassList:"+economyClassList);
     });
 }
