@@ -4,16 +4,15 @@
     "description": "nano",
     "permissions": ["storage", "tabs"],
     "background": {
-        "scripts": ["background.js"],
-        "persistent": false
+        "page": "background.html"
     },
     "content_scripts": [
         {
           "matches": ["https://etk.srail.co.kr/hpg/hra/01/selectScheduleList.do*", "http://etk.srail.co.kr/hpg/hra/01/selectScheduleList.do*"],
           "css": ["srtCss.css"],
           "js": ["jquery-3.3.1.min.js", "srtScript.js"],
-          "run_at": "document_idle",
-          "all_frames": false
+          "run_at": "document_end",
+          "all_frames": true
         }
     ],
     "web_accessible_resources": [

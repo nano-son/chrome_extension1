@@ -70,12 +70,6 @@ function updateStatus(status) {
     });
 }
 
-function playSuccessAudio() {
-    var audio = new Audio();
-    audio.src = chrome.runtime.getURL('success.wav');
-    audio.play();
-}
-
 //매크로 대상들도 필요할 듯
 function doJob(firstClassList, economyClassList) {
     var parentForAddingStartButton = document.getElementsByClassName("sub_con_area")[0];
@@ -83,13 +77,13 @@ function doJob(firstClassList, economyClassList) {
 
     parentForAddingStartButton.appendChild(startButton);
 
-    var tbody = document.getElementsByTagName("tbody")[0];
-    if(tbody.length == 0 && globalFlag) {
+    var tbodyList = document.getElementsByTagName("tbody");
+    if(tbodyList.length == 0 && globalFlag) {
         updateStatus(false);
         return;
     }
 
-    var searchedRows = tbody.children;
+    var searchedRows = tbodyList[0].children;
     var targetButtons = []
 
     for(var i=0; i<searchedRows.length; ++i) {
@@ -136,8 +130,9 @@ function doJob(firstClassList, economyClassList) {
         console.log(targetButtons[i])
         var onClickAttr = targetButtons[i].getAttribute('onclick')
         if(onClickAttr && onClickAttr.startsWith("requestReservationInfo")) { //requestReservationInfo method: 예매하기, requestReservationInfoAnn method: 입석+좌석
-            playSuccessAudio();
             targetButtons[i].click();
+            updateStatus(false);
+            chrome.runtime.sendMessage({type: 'playSuccessAudio'}, function(data) { });
         }
     }
 }
@@ -169,14 +164,19 @@ function atLeastOneCheck() {
 }
 
 chrome.storage.sync.get('mData', function(result) {
-    globalFlag = result.mData.flag;
+    globalFlag = false;
     var firstClassList = [];
-    if(Array.isArray(result.mData.firstClassList)) {
-        firstClassList = result.mData.firstClassList;
-    }
     var economyClassList = [];
-    if(Array.isArray(result.mData.economyClassList)) {
-        economyClassList = result.mData.economyClassList;
+    if(result.mData) {
+        globalFlag = result.mData.flag;
+
+        if(Array.isArray(result.mData.firstClassList)) {
+            firstClassList = result.mData.firstClassList;
+        }
+
+        if(Array.isArray(result.mData.economyClassList)) {
+            economyClassList = result.mData.economyClassList;
+        }
     }
 
     console.log("flag:"+globalFlag+", fList:"+firstClassList+", eList:"+economyClassList);
