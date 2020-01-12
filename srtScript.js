@@ -1,5 +1,6 @@
 var idOfTimeOut;
 var globalFlag = false;
+const refreshInterval = 2200; //ms
 
 function makeStartButton() {
     var startButton = document.createElement("button");    
@@ -9,7 +10,6 @@ function makeStartButton() {
     
     if(globalFlag) {
         startButton.innerText = "중지";
-        window.onload = refreshPageAfter(2200);
     } else {
         startButton.innerText = "시작";
     }
@@ -72,6 +72,10 @@ function updateStatus(status) {
 
 //매크로 대상들도 필요할 듯
 function doJob(firstClassList, economyClassList) {
+    if(globalFlag) {
+        window.onload = refreshPageAfter(refreshInterval);
+    }
+
     var parentForAddingStartButton = document.getElementsByClassName("sub_con_area")[0];
     var startButton = makeStartButton();
 
