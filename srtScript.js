@@ -167,6 +167,7 @@ chrome.storage.sync.get('mData', function(result) {
     globalFlag = false;
     var firstClassList = [];
     var economyClassList = [];
+
     if(result.mData) {
         globalFlag = result.mData.flag;
 
