@@ -58,7 +58,7 @@ function updateStatus(status) {
 
     chrome.storage.sync.set({mData: {flag: status, firstClassList: firstClassList, economyClassList: economyClassList}}, function() {
         globalFlag = status;
-        startButton = document.getElementById("mStartButton");
+        startButton = $("#mStartButton");
         if(status) {
             startButton.innerText = "중지";
             location.reload(true);
@@ -76,20 +76,19 @@ function doJob(firstClassList, economyClassList) {
         window.onload = refreshPageAfter(refreshInterval);
     }
 
-    var parentForAddingStartButton = document.getElementsByClassName("sub_con_area")[0];
-    var startButton = makeStartButton();
+    var parentForAddingStartButton = $(".sub_con_area")[0];
+    parentForAddingStartButton.appendChild(makeStartButton());
 
-    parentForAddingStartButton.appendChild(startButton);
-
-    var tbodyList = document.getElementsByTagName("tbody");
+    var tbodyList = $("tbody");
     if(tbodyList.length == 0 && globalFlag) {
         updateStatus(false);
         return;
     }
 
     var searchedRows = tbodyList[0].children;
-    var targetButtons = []
+    var reservationButtons = []
 
+    //각 줄에 체크박스를 넣고 초기화한다.
     for(var i=0; i<searchedRows.length; ++i) {
         var row = searchedRows[i];
         var trainNumber = row.children[2].innerText;
@@ -100,41 +99,37 @@ function doJob(firstClassList, economyClassList) {
         checkBtn.setAttribute("type", "checkbox");
         checkBtn.setAttribute("class", "mCheckboxForFirstClass");
     
+        tdForFirstClass.insertBefore(checkBtn, tdForFirstClass.firstChild);
         if(firstClassList.includes(trainNumber)) {
             checkBtn.checked = true;
-            targetButtons.push(Array.from(tdForFirstClass.getElementsByTagName("a")));
+            reservationButtons.push(Array.from(tdForFirstClass.getElementsByTagName("a")));
         }
-        tdForFirstClass.insertBefore(checkBtn, tdForFirstClass.firstChild);
 
         checkBtn2 = document.createElement("input");
         checkBtn2.setAttribute("type", "checkbox");
         checkBtn2.setAttribute("class", "mCheckboxForEconomyClass");
-        checkBtn2.checked = economyClassList.includes(trainNumber);
+
+        tdForEconomyClass.insertBefore(checkBtn2, tdForEconomyClass.firstChild);
         if(economyClassList.includes(trainNumber)) {
             checkBtn2.checked = true;
-            targetButtons.push(Array.from(tdForEconomyClass.getElementsByTagName("a")));
+            reservationButtons.push(Array.from(tdForEconomyClass.getElementsByTagName("a")));
         }
-        tdForEconomyClass.insertBefore(checkBtn2, tdForEconomyClass.firstChild);
 
         if(globalFlag) {
-            console.log("ttttest");
             checkBtn.onclick = canNotModifyCheckBox;
             checkBtn2.onclick = canNotModifyCheckBox;
         }
     }
 
-    targetButtons = targetButtons.flat(); //평탄화
-    if(targetButtons.length <= 0) {
-        console.log("flag down")
+    reservationButtons = reservationButtons.flat(); //평탄화
+    if(reservationButtons.length <= 0) {
         updateStatus(false);
     }
-
     
-    for(var i=0; i<targetButtons.length; ++i) {
-        console.log(targetButtons[i])
-        var onClickAttr = targetButtons[i].getAttribute('onclick')
+    for(var i=0; i<reservationButtons.length; ++i) {
+        var onClickAttr = reservationButtons[i].getAttribute('onclick')
         if(onClickAttr && onClickAttr.startsWith("requestReservationInfo")) { //requestReservationInfo method: 예매하기, requestReservationInfoAnn method: 입석+좌석
-            targetButtons[i].click();
+            reservationButtons[i].click();
             updateStatus(false);
             chrome.runtime.sendMessage({type: 'playSuccessAudio'}, function(data) { });
         }
