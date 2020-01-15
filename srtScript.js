@@ -60,10 +60,10 @@ function updateStatus(status) {
         globalFlag = status;
         startButton = $("#mStartButton");
         if(status) {
-            startButton.innerText = "중지";
+            startButton.html("중지");
             location.reload(true);
         } else {
-            startButton.innerText = "시작";
+            startButton.html("시작");
             clearTimeout(idOfTimeOut);
         }
         console.log("status setting completed: "+status+", firstClassList:"+firstClassList+", economyClassList:"+economyClassList);
