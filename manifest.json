@@ -8,7 +8,7 @@
     },
     "content_scripts": [
         {
-          "matches": ["https://etk.srail.co.kr/hpg/hra/01/selectScheduleList.do*", "http://etk.srail.co.kr/hpg/hra/01/selectScheduleList.do*"],
+          "matches": ["https://etk.srail.co.kr/hpg/hra/01/selectScheduleList.do*", "http://etk.srail.co.kr/hpg/hra/01/selectScheduleList.do*", "https://etk.srail.kr/hpg/hra/01/selectScheduleList.do*", "http://etk.srail.kr/hpg/hra/01/selectScheduleList.do*"],
           "js": ["jquery-3.4.1.min.js", "srtScript.js"],
           "run_at": "document_end",
           "all_frames": true
