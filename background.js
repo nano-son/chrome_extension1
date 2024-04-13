@@ -1,4 +1,5 @@
 function playSuccessAudio() {
+  console.log("hello!!! audio");
   var audio = new Audio();
   audio.src = chrome.runtime.getURL('success.wav');
   audio.play();

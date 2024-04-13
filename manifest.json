@@ -15,7 +15,10 @@
         }
     ],
     "web_accessible_resources": [
-        "success.wav"
+        {
+            "resources": ["success.wav"],
+            "matches": ["*://*/*"]
+        }
     ],
-    "manifest_version": 2
+    "manifest_version": 3
 }
